@@ -278,14 +278,14 @@ export default function PricingPage() {
               <CardContent>
                 <p className="text-sm text-gray-600">
                   Yes, absolutely. Static QR codes generated with our free plan embed the data directly in the code
-                  itself. They don't depend on our servers and will work forever.
+                  itself. They don&apos;t depend on our servers and will work forever.
                 </p>
               </CardContent>
             </Card>
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">What's the difference between static and dynamic?</CardTitle>
+                <CardTitle className="text-lg">What&apos;s the difference between static and dynamic?</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
@@ -302,7 +302,7 @@ export default function PricingPage() {
               <CardContent>
                 <p className="text-sm text-gray-600">
                   Yes, you can upgrade to Pro anytime. If you downgrade, your dynamic QR codes will continue working,
-                  but you won't be able to edit them or access analytics.
+                  but you won&apos;t be able to edit them or access analytics.
                 </p>
               </CardContent>
             </Card>
@@ -313,7 +313,7 @@ export default function PricingPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  We offer a 30-day money-back guarantee for all paid plans. If you're not satisfied, contact us for a
+                  We offer a 30-day money-back guarantee for all paid plans. If you&apos;re not satisfied, contact us for a
                   full refund within 30 days of purchase.
                 </p>
               </CardContent>

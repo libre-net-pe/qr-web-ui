@@ -94,7 +94,7 @@ export default function HomePage() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-gray-600 mb-4">
-                See how many people scan your QR codes, where they're from, and what devices they use.
+                See how many people scan your QR codes, where they&apos;re from, and what devices they use.
               </p>
               <Button
                 variant="outline"

@@ -28,11 +28,9 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
 
         const qrWidth = image.width
         const qrHeight = image.height
-        const textHeight = 30
-        const textMargin = 10
 
         canvas.width = qrWidth
-        canvas.height = qrHeight + textHeight + textMargin
+        canvas.height = qrHeight + 5
 
         if (context) {
           context.fillStyle = "#FFFFFF"
@@ -43,7 +41,7 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
           context.fillStyle = "#000000"
           context.font = "bold 16px Arial"
           context.textAlign = "center"
-          context.fillText("Created with https://qr.libre.net.pe", canvas.width / 2, qrHeight + textHeight)
+          context.fillText("Created with https://qr.libre.net.pe", canvas.width / 2, qrHeight - 5)
         }
 
         resolve(canvas.toDataURL("image/png"))
@@ -52,19 +50,14 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
     })
   }
 
-  const addTextToSVG = (svgString: string, width: number): string => {
+  const addTextToSVG = (svgString: string): string => {
     const text = "Created with https://qr.libre.net.pe";
-    const textHeight = 40;
-    const newHeight = width + textHeight;
 
     const container = d3.create("div");
     container.html(svgString);
 
     const svg = container.select("svg");
     console.log(svgString);
-
-    // svg.attr("height", newHeight)
-    //    .attr("viewBox", `0 0 ${width} ${newHeight}`);
 
     svg.append("text")
        .attr("x", 12)
@@ -82,13 +75,13 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
 
   const calculateScannabilityScore = (color: string, textLength: number) => {
     // Simple scannability calculation based on contrast and data density
-    const contrast = getContrastRatio(color, "#FFFFFF")
+    const contrast = getContrastRatio(color)
     const densityScore = Math.max(0, 100 - textLength * 0.5)
     const contrastScore = Math.min(100, contrast * 20)
     return Math.round((densityScore + contrastScore) / 2)
   }
 
-  const getContrastRatio = (color1: string, color2: string) => {
+  const getContrastRatio = (color1: string) => {
     // Simplified contrast calculation
     const hex1 = color1.replace("#", "")
     const r1 = Number.parseInt(hex1.substr(0, 2), 16)
@@ -116,7 +109,7 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
 
       if (format === "svg") {
         let svgString = await QRCode.toString(inputText, { ...options, type: "svg" })
-        svgString = addTextToSVG(svgString, options.width);
+        svgString = addTextToSVG(svgString);
         const blob = new Blob([svgString], { type: "image/svg+xml" })
         dataUrl = URL.createObjectURL(blob)
       } else {

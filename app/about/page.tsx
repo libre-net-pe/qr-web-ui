@@ -58,7 +58,7 @@ export default function AboutPage() {
             <p className="text-gray-700 leading-relaxed">
               Reliable QR was created to address the frustrating experiences users face with existing QR code
               generators. We believe in providing a genuinely free service for basic QR code generation, with complete
-              transparency about what's free and what's premium. No hidden costs, no expiring codes, no data hostage
+              transparency about what&apos;s free and what&apos;s premium. No hidden costs, no expiring codes, no data hostage
               situations.
             </p>
           </CardContent>
@@ -123,8 +123,8 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  Clear pricing, no hidden fees, upfront about what's free vs. premium. You'll always know exactly what
-                  you're getting.
+                  Clear pricing, no hidden fees, upfront about what&apos;s free vs. premium. You&apos;ll always know exactly what
+                  you&apos;re getting.
                 </p>
               </CardContent>
             </Card>
@@ -138,7 +138,7 @@ export default function AboutPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-600">
-                  Static QR codes are generated in your browser. We don't store your data or track your usage for free
+                  Static QR codes are generated in your browser. We don&apos;t store your data or track your usage for free
                   tier services.
                 </p>
               </CardContent>
@@ -209,7 +209,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">
-              Have questions, feedback, or need support? We're here to help with real human support, not just AI
+              Have questions, feedback, or need support? We&apos;re here to help with real human support, not just AI
               chatbots.
             </p>
             <div className="space-y-2">

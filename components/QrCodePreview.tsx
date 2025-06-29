@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Download } from "lucide-react"
 import QRCode from "qrcode"
+import * as d3 from "d3";
 
 interface QrCodePreviewProps {
   inputText: string
@@ -56,25 +57,26 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
     const textHeight = 40;
     const newHeight = width + textHeight;
 
-    let modifiedSvgString = svgString.replace(
-        `height="${width}"`,
-        `height="${newHeight}"`
-    );
-    modifiedSvgString = modifiedSvgString.replace(
-        `viewBox="0 0 ${width} ${width}"`,
-        `viewBox="0 0 ${width} ${newHeight}"`
-    );
+    const container = d3.create("div");
+    container.html(svgString);
 
-    const textElement = `
-<g>
-  <text x="${width / 2}" y="${width + textHeight / 2}" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#000000">${text}</text>
-</g>
-`;
-    const lastSvgTagIndex = modifiedSvgString.lastIndexOf('</svg>');
-    if (lastSvgTagIndex !== -1) {
-      return modifiedSvgString.slice(0, lastSvgTagIndex) + textElement + modifiedSvgString.slice(lastSvgTagIndex);
-    }
-    return modifiedSvgString;
+    const svg = container.select("svg");
+    console.log(svgString);
+
+    // svg.attr("height", newHeight)
+    //    .attr("viewBox", `0 0 ${width} ${newHeight}`);
+
+    svg.append("text")
+       .attr("x", 12)
+       .attr("y", 24)
+       .attr("text-anchor", "middle")
+       .attr("font-family", "Arial")
+       .attr("font-size", "1")
+       .attr("font-weight", "bold")
+       .attr("fill", "#000000")
+       .text(text);
+
+    return container.html();
   };
 
 

@@ -10,14 +10,74 @@ import { Badge } from "@/components/ui/badge"
 import { Download, Upload, Zap, BarChart3, Link2, Shield } from "lucide-react"
 import QRCode from "qrcode"
 import Link from "next/link"
+import { GeneratorForm } from "@/components/GeneratorForm"
 
 export default function HomePage() {
   const [inputText, setInputText] = useState("")
   const [qrColor, setQrColor] = useState("#000000")
-  const [errorCorrectionLevel, setErrorCorrectionLevel] = useState("M")
+  const [errorCorrectionLevel, setErrorCorrectionLevel] = useState("Q")
   const [qrCodeDataUrl, setQrCodeDataUrl] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [scannabilityScore, setScannabilityScore] = useState(0)
+
+  const addTextToQRCode = (dataUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const image = new Image()
+      image.onload = () => {
+        const canvas = document.createElement("canvas")
+        const context = canvas.getContext("2d")
+
+        const qrWidth = image.width
+        const qrHeight = image.height
+        const textHeight = 30
+        const textMargin = 10
+
+        canvas.width = qrWidth
+        canvas.height = qrHeight + textHeight + textMargin
+
+        if (context) {
+          context.fillStyle = "#FFFFFF"
+          context.fillRect(0, 0, canvas.width, canvas.height)
+
+          context.drawImage(image, 0, 0)
+
+          context.fillStyle = "#000000"
+          context.font = "bold 16px Arial"
+          context.textAlign = "center"
+          context.fillText("Created with https://qr.libre.net.pe", canvas.width / 2, qrHeight + textHeight)
+        }
+
+        resolve(canvas.toDataURL("image/png"))
+      }
+      image.src = dataUrl
+    })
+  }
+
+  const addTextToSVG = (svgString: string, width: number): string => {
+    const text = "Created with https://qr.libre.net.pe";
+    const textHeight = 40;
+    const newHeight = width + textHeight;
+
+    let modifiedSvgString = svgString.replace(
+        `height="${width}"`,
+        `height="${newHeight}"`
+    );
+    modifiedSvgString = modifiedSvgString.replace(
+        `viewBox="0 0 ${width} ${width}"`,
+        `viewBox="0 0 ${width} ${newHeight}"`
+    );
+
+    const textElement = `
+<g>
+  <text x="${width / 2}" y="${width + textHeight / 2}" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#000000">${text}</text>
+</g>
+`;
+    const lastSvgTagIndex = modifiedSvgString.lastIndexOf('</svg>');
+    if (lastSvgTagIndex !== -1) {
+      return modifiedSvgString.slice(0, lastSvgTagIndex) + textElement + modifiedSvgString.slice(lastSvgTagIndex);
+    }
+    return modifiedSvgString;
+  };
 
   const generateQRCode = async () => {
     if (!inputText.trim()) return
@@ -35,7 +95,8 @@ export default function HomePage() {
       }
 
       const dataUrl = await QRCode.toDataURL(inputText, options)
-      setQrCodeDataUrl(dataUrl)
+      const finalDataUrl = await addTextToQRCode(dataUrl)
+      setQrCodeDataUrl(finalDataUrl)
 
       // Calculate scannability score based on contrast and other factors
       const score = calculateScannabilityScore(qrColor, inputText.length)
@@ -82,11 +143,13 @@ export default function HomePage() {
       }
 
       if (format === "svg") {
-        const svgString = await QRCode.toString(inputText, { ...options, type: "svg" })
+        let svgString = await QRCode.toString(inputText, { ...options, type: "svg" })
+        svgString = addTextToSVG(svgString, options.width);
         const blob = new Blob([svgString], { type: "image/svg+xml" })
         dataUrl = URL.createObjectURL(blob)
       } else {
-        dataUrl = await QRCode.toDataURL(inputText, options)
+        const pngDataUrl = await QRCode.toDataURL(inputText, options)
+        dataUrl = await addTextToQRCode(pngDataUrl)
       }
 
       const link = document.createElement("a")
@@ -166,71 +229,14 @@ export default function HomePage() {
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Generator Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>QR Code Generator</CardTitle>
-              <CardDescription>Enter your URL or text to generate a permanent QR code</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="input-text">URL or Text</Label>
-                <Input
-                  id="input-text"
-                  placeholder="https://example.com or any text"
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="qr-color">QR Code Color</Label>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      id="qr-color"
-                      value={qrColor}
-                      onChange={(e) => setQrColor(e.target.value)}
-                      className="w-12 h-10 rounded border border-gray-300"
-                    />
-                    <Input value={qrColor} onChange={(e) => setQrColor(e.target.value)} className="flex-1" />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="error-correction">Error Correction</Label>
-                  <Select value={errorCorrectionLevel} onValueChange={setErrorCorrectionLevel}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="L">Low (7%)</SelectItem>
-                      <SelectItem value="M">Medium (15%)</SelectItem>
-                      <SelectItem value="Q">Quartile (25%)</SelectItem>
-                      <SelectItem value="H">High (30%)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Logo Upload (Coming Soon)</Label>
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-500">
-                  <Upload className="mx-auto h-8 w-8 mb-2" />
-                  <p className="text-sm">Upload logo feature available in premium plan</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2 bg-transparent"
-                    onClick={() => (window.location.href = "/pricing")}
-                  >
-                    View Premium Features
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <GeneratorForm
+            inputText={inputText}
+            setInputText={setInputText}
+            qrColor={qrColor}
+            setQrColor={setQrColor}
+            errorCorrectionLevel={errorCorrectionLevel}
+            setErrorCorrectionLevel={setErrorCorrectionLevel}
+          />
 
           {/* QR Code Preview */}
           <Card>

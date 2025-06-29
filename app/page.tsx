@@ -2,12 +2,9 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Download, Upload, Zap, BarChart3, Link2, Shield } from "lucide-react"
+import { Download, Zap, BarChart3, Link2, Shield } from "lucide-react"
 import QRCode from "qrcode"
 import Link from "next/link"
 import { GeneratorForm } from "@/components/GeneratorForm"
@@ -178,7 +175,7 @@ export default function HomePage() {
   }, [inputText, qrColor, errorCorrectionLevel])
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

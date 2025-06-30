@@ -38,3 +38,4 @@ next-env.d.ts
 # firebase
 pglite-debug.log
 firebase-debug.log
+.firebase/

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -19,7 +19,7 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
   const [isGenerating, setIsGenerating] = useState(false)
   const [scannabilityScore, setScannabilityScore] = useState(0)
 
-  const addTextToQRCode = (dataUrl: string): Promise<string> => {
+  const addTextToQRCode = useCallback((dataUrl: string): Promise<string> => {
     return new Promise((resolve) => {
       const image = new Image()
       image.onload = () => {
@@ -48,9 +48,9 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
       }
       image.src = dataUrl
     })
-  }
+  }, [])
 
-  const addTextToSVG = (svgString: string): string => {
+  const addTextToSVG = useCallback((svgString: string): string => {
     const text = "Created with https://qr.libre.net.pe";
 
     const container = d3.create("div");
@@ -70,29 +70,9 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
        .text(text);
 
     return container.html();
-  };
+  }, []);
 
-
-  const calculateScannabilityScore = (color: string, textLength: number) => {
-    // Simple scannability calculation based on contrast and data density
-    const contrast = getContrastRatio(color)
-    const densityScore = Math.max(0, 100 - textLength * 0.5)
-    const contrastScore = Math.min(100, contrast * 20)
-    return Math.round((densityScore + contrastScore) / 2)
-  }
-
-  const getContrastRatio = (color1: string) => {
-    // Simplified contrast calculation
-    const hex1 = color1.replace("#", "")
-    const r1 = Number.parseInt(hex1.substr(0, 2), 16)
-    const g1 = Number.parseInt(hex1.substr(2, 2), 16)
-    const b1 = Number.parseInt(hex1.substr(4, 2), 16)
-    const luminance1 = (0.299 * r1 + 0.587 * g1 + 0.114 * b1) / 255
-
-    return Math.abs(luminance1 - 1) // Contrast with white
-  }
-
-  const downloadQRCode = async (format: "png" | "svg") => {
+  const downloadQRCode = useCallback(async (format: "png" | "svg") => {
     if (!inputText.trim()) return
 
     try {
@@ -128,9 +108,28 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
     } catch (error) {
       console.error("Error downloading QR code:", error)
     }
-  }
+  }, [inputText, qrColor, errorCorrectionLevel, addTextToQRCode, addTextToSVG]);
 
   useEffect(() => {
+    const getContrastRatio = (color1: string) => {
+      // Simplified contrast calculation
+      const hex1 = color1.replace("#", "")
+      const r1 = Number.parseInt(hex1.substr(0, 2), 16)
+      const g1 = Number.parseInt(hex1.substr(2, 2), 16)
+      const b1 = Number.parseInt(hex1.substr(4, 2), 16)
+      const luminance1 = (0.299 * r1 + 0.587 * g1 + 0.114 * b1) / 255
+
+      return Math.abs(luminance1 - 1) // Contrast with white
+    }
+
+    const calculateScannabilityScore = (color: string, textLength: number) => {
+      // Simple scannability calculation based on contrast and data density
+      const contrast = getContrastRatio(color)
+      const densityScore = Math.max(0, 100 - textLength * 0.5)
+      const contrastScore = Math.min(100, contrast * 20)
+      return Math.round((densityScore + contrastScore) / 2)
+    }
+
     const generateQRCode = async () => {
       if (!inputText.trim()) {
         setQrCodeDataUrl("")
@@ -168,7 +167,7 @@ export function QrCodePreview({ inputText, qrColor, errorCorrectionLevel }: QrCo
       generateQRCode()
     }, 500)
     return () => clearTimeout(debounceTimer)
-  }, [inputText, qrColor, errorCorrectionLevel])
+  }, [inputText, qrColor, errorCorrectionLevel, addTextToQRCode])
 
   return (
     <Card>

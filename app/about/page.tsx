@@ -3,6 +3,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Shield, Zap, Users, Lock, Globe, Heart } from "lucide-react"
 import Link from "next/link"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "About Reliable QR | Our Mission and Principles",
+  description:
+    "Learn about Reliable QR's mission to provide transparent, free, and reliable QR code generation. Discover our commitment to privacy and user trust.",
+  alternates: {
+    canonical: "https://qr.libre.net.pe/about",
+  },
+}
 
 export default function AboutPage() {
   return (

@@ -1,3 +1,4 @@
+import { Metadata } from "next"
 "use client"
 
 import { useState } from "react"
@@ -7,6 +8,15 @@ import { Zap, BarChart3, Link2, Shield } from "lucide-react"
 import Link from "next/link"
 import { GeneratorForm } from "@/components/GeneratorForm"
 import { QrCodePreview } from "@/components/QrCodePreview"
+
+export const metadata: Metadata = {
+  title: "Free QR Code Generator | Create QR Codes That Never Expire",
+  description:
+    "Instantly create free, high-quality QR codes that never expire. No sign-up, no tracking, just permanent static QR codes for any purpose.",
+  alternates: {
+    canonical: "https://qr.libre.net.pe",
+  },
+}
 
 export default function HomePage() {
   const [inputText, setInputText] = useState("")

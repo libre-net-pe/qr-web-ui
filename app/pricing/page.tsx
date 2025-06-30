@@ -3,6 +3,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Check, X, Zap, Headphones } from "lucide-react"
 import Link from "next/link"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Pricing | Reliable QR Plans",
+  description:
+    "Explore our transparent pricing. Use our free plan forever or upgrade to a premium plan for advanced features like dynamic QR codes and analytics.",
+  alternates: {
+    canonical: "https://qr.libre.net.pe/pricing",
+  },
+}
 
 export default function PricingPage() {
   const features = {
